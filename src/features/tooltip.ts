@@ -2,6 +2,14 @@ import { DataItemInfo } from "../models/internal/dataItemInfo";
 
 // let hoveredItem: DataItemInfo | null = null;
 
+export function createTooltipElement(): HTMLDivElement {
+  const tooltip = document.createElement("div") as HTMLDivElement;
+  tooltip.id = "tooltip";
+  tooltip.style.display = "none";
+  document.body.appendChild(tooltip);
+  return tooltip;
+}
+
 export function handleMouseMove(
   event: MouseEvent,
   data: DataItemInfo[],

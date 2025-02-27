@@ -12,4 +12,5 @@ export interface Configuration {
   maxLines: number;
   textWrap: boolean;
   isResizeCanvasOnWindowSizeChange: boolean;
+  showToolTip: boolean;
 }

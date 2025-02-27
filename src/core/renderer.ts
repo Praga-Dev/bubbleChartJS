@@ -1,6 +1,6 @@
 import { Configuration } from "../models/public/configuration";
 import { getWrappedLines } from "../features/textWrapper";
-import { handleMouseMove } from "../features/tooltip";
+import { createTooltipElement, handleMouseMove } from "../features/tooltip";
 import { validateConfig } from "../utils/validation";
 import { createCanvas } from "../canvas";
 import { getChartData } from "../services/renderService";
@@ -95,16 +95,16 @@ export function renderChart(config: Configuration) {
 
   // Initial draw
   draw();
-  let animationFrameId: number | null = null;
-  const tooltip = document.createElement("div") as HTMLDivElement;
-  tooltip.id = "tooltip";
-  document.body.appendChild(tooltip);
 
-  canvas.addEventListener("mousemove", (event) => {
-    if (animationFrameId) return; // Prevent excessive calls
-    animationFrameId = requestAnimationFrame(() => {
-      handleMouseMove(event, sortedData, canvas, tooltip);
-      animationFrameId = null; // Reset after execution
+  if (config.showToolTip) {
+    const tooltip = createTooltipElement();
+    let animationFrameId: number | null = null;
+    canvas.addEventListener("mousemove", (event) => {
+      if (animationFrameId) return; // Prevent excessive calls
+      animationFrameId = requestAnimationFrame(() => {
+        handleMouseMove(event, sortedData, canvas, tooltip);
+        animationFrameId = null; // Reset after execution
+      });
     });
-  });
+  }
 }

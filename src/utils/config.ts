@@ -14,6 +14,7 @@ export const DEFAULT_CONFIG: Omit<Configuration, "canvasContainerId" | "data"> =
     isResizeCanvasOnWindowSizeChange: true,
     fontSize: 14,
     fontFamily: "Arial",
+    showToolTip: true,
   };
 
 /**
