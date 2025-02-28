@@ -97,7 +97,7 @@ export function renderChart(config: Configuration) {
   draw();
 
   if (config.showToolTip) {
-    const tooltip = createTooltipElement();
+    const tooltip = createTooltipElement(config.canvasContainerId);
     let animationFrameId: number | null = null;
     canvas.addEventListener("mousemove", (event) => {
       if (animationFrameId) return; // Prevent excessive calls
