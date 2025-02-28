@@ -2,10 +2,36 @@ import { DataItemInfo } from "../models/internal/dataItemInfo";
 
 // let hoveredItem: DataItemInfo | null = null;
 
-export function createTooltipElement(): HTMLDivElement {
+export function createTooltipElement(
+  canvasContainerId: string
+): HTMLDivElement {
   const tooltip = document.createElement("div") as HTMLDivElement;
   tooltip.id = "tooltip";
   tooltip.style.display = "none";
+
+  // Apply styles
+  Object.assign(tooltip.style, {
+    position: "absolute",
+    padding: "8px",
+    background: "rgba(0, 0, 0, 0.85)",
+    color: "white",
+    borderRadius: "4px",
+    pointerEvents: "none",
+    fontFamily: "Arial, sans-serif",
+    fontSize: "14px",
+    maxWidth: "200px",
+    transition: "opacity 0.2s",
+  });
+
+  if (canvasContainerId) {
+    const canvasContainer = document.getElementById(
+      canvasContainerId
+    ) as HTMLDivElement;
+    if (canvasContainer) {
+      canvasContainer.appendChild(tooltip);
+      return tooltip;
+    }
+  }
   document.body.appendChild(tooltip);
   return tooltip;
 }

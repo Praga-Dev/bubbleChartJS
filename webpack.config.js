@@ -1,10 +1,11 @@
 const path = require("path");
 
 module.exports = {
-  entry: "./src/main.ts", // Entry point for your application
+  entry: "./src/index.ts", // Entry point for your application
   output: {
-    filename: "bundle.js", // Output bundle file
+    filename: "index.js", // Change from bundle.js to index.js
     path: path.resolve(__dirname, "dist"), // Output directory
+    libraryTarget: "commonjs2", // Ensure it's exportable as an npm package
   },
   resolve: {
     extensions: [".ts", ".js"], // Resolve TypeScript and JavaScript files
