@@ -5,6 +5,7 @@ import { validateConfig } from "../utils/validation";
 import { createCanvas } from "../canvas";
 import { getChartData } from "../services/renderService";
 import { getFontSize } from "../utils/helper";
+import { DataItemInfo } from "../models/internal/dataItemInfo";
 
 export function renderChart(config: Configuration) {
   if (!validateConfig(config)) return;
@@ -31,35 +32,62 @@ export function renderChart(config: Configuration) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     sortedData.forEach((item) => {
-      const color = config.colorMap[item.label] || config.defaultBubbleColor;
+      const {
+        x,
+        y,
+        radius,
+        bubbleColor,
+        borderColor,
+        borderThickness,
+        opacity,
+        fontColor,
+        fontFamily,
+        fontSize,
+        fontStyle,
+        fontWeight,
+        textAlign,
+        textTransform,
+        textBaseline,
+      } = getDefaultValues(item, config);
 
-      // Ensure radius is at least minRadius
-      const radius = Math.max(item.radius, config.minRadius);
+      // Set opacity for the bubble only
+      // if(opacity){
+      //   ctx.save(); // Save canvas state
+      //   ctx.globalAlpha = opacity;
+      // }
 
+      // Draw bubble
       ctx.beginPath();
-      ctx.arc(item.x, item.y, radius, 0, Math.PI * 2);
-      ctx.fillStyle = color;
+      ctx.arc(x, y, radius, 0, Math.PI * 2);
+      ctx.fillStyle = bubbleColor;
       ctx.fill();
 
-      ctx.strokeStyle = "black"; // Border color
-      ctx.lineWidth = 0.25; // Border thickness
-      ctx.stroke(); // Apply border
+      ctx.strokeStyle = borderColor;
+      ctx.lineWidth = borderThickness;
+      ctx.stroke();
 
       // Text styling
-      ctx.fillStyle = config.fontColor;
-      const fontSize = getFontSize(radius, config.fontSize);
-      ctx.font = `${fontSize}px ${config.fontFamily}`;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
+      ctx.fillStyle = fontColor;
+      ctx.font = `${fontStyle} ${fontWeight} ${fontSize}px ${fontFamily}`;
+      ctx.textAlign = textAlign;
+      ctx.textBaseline = textBaseline;
 
-      const padding = 5; // Padding around text
-      const maxWidth = radius * 1.5 - padding * 2; // Adjusted for padding
+      // Transform text (uppercase, lowercase, capitalize)
+      let labelText = item.label || "";
+      if (textTransform === "uppercase") labelText = labelText.toUpperCase();
+      else if (textTransform === "lowercase")
+        labelText = labelText.toLowerCase();
+      else if (textTransform === "capitalize")
+        labelText = labelText.replace(/\b\w/g, (c) => c.toUpperCase());
 
+      // ctx.restore(); // Restore previous state (removes opacity effect)
+
+      // Handle text wrapping if enabled
       if (config.textWrap) {
-        // Calculate vertical position for lines
+        const padding = 5;
+        const maxWidth = radius * 1.5 - padding * 2;
         const lineHeight = fontSize * 1.2;
 
-        // Dynamically determine lines if maxLines is not set
         const lines = getWrappedLines(
           ctx,
           item.label,
@@ -67,15 +95,43 @@ export function renderChart(config: Configuration) {
           config.maxLines,
           radius
         );
-        const startY = item.y - ((lines.length - 1) * lineHeight) / 2;
+        const startY = y - ((lines.length - 1) * lineHeight) / 2;
 
-        lines.forEach((line, index) => {
-          ctx.fillText(line, item.x, startY + index * lineHeight);
-        });
+        lines.forEach((line, index) =>
+          ctx.fillText(line, x, startY + index * lineHeight)
+        );
       } else {
-        ctx.fillText(item.label, item.x, item.y);
+        ctx.fillText(item.label, x, y);
       }
     });
+  }
+
+  /**
+   * Returns an object with default values for bubble properties.
+   * If a property is provided, it retains its original value.
+   */
+  function getDefaultValues(item: DataItemInfo, config: Configuration) {
+    const ctxStyleConfig = {
+      // Bubble properties
+      x: item.x,
+      y: item.y,
+      radius: Math.max(item.radius, config.minRadius), // Ensure minimum radius
+      bubbleColor: item.bubbleColor ?? config.defaultBubbleColor,
+      borderColor: item.borderColor ?? "black",
+      borderThickness: item.borderThickness ?? 0.25,
+      opacity: item.opacity ?? 1, // Default opacity to 1 (fully visible)
+
+      // Font properties
+      fontFamily: item.fontFamily ?? config.defaultFontFamily,
+      fontStyle: item.fontStyle ?? "normal",
+      fontWeight: item.fontWeight ?? 400,
+      textAlign: item.textAlign ?? "center",
+      textTransform: item.textTransform ?? "none",
+      fontColor: item.fontColor ?? config.defaultFontColor,
+      textBaseline: item.textBaseline ?? "middle",
+      fontSize: getFontSize(item.radius, config.fontSize, item.fontWeight),
+    };
+    return ctxStyleConfig;
   }
 
   // Robust approach that handles resizing:
@@ -97,12 +153,12 @@ export function renderChart(config: Configuration) {
   draw();
 
   if (config.showToolTip) {
-    const tooltip = createTooltipElement(config.canvasContainerId);
+    const tooltip = createTooltipElement(config);
     let animationFrameId: number | null = null;
     canvas.addEventListener("mousemove", (event) => {
       if (animationFrameId) return; // Prevent excessive calls
       animationFrameId = requestAnimationFrame(() => {
-        handleMouseMove(event, sortedData, canvas, tooltip);
+        handleMouseMove(event, sortedData, canvas, tooltip, config);
         animationFrameId = null; // Reset after execution
       });
     });

@@ -57,7 +57,7 @@ const config = {
     B: "#33ff57",
     C: "#3357ff",
   },
-  defaultBubbleColor: "#cccccc",
+  defaultBubbleColor: "#3498DB",
   fontSize: 14,
   fontFamily: "Arial",
   fontColor: "#000000",

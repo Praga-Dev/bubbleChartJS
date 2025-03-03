@@ -1,16 +1,22 @@
+import { InteractionOptions } from "./config/interaction-options";
+import { TooltipOptions } from "./config/tooltip-options";
 import { DataItem } from "./dataItem";
 
-export interface Configuration {
+export interface Configuration extends InteractionOptions {
   canvasContainerId: string;
   data: DataItem[];
-  colorMap: Record<string, string>;
-  defaultBubbleColor: string;
-  fontSize: number;
-  fontFamily: string;
-  fontColor: string;
+
+  // bubble
   minRadius: number;
-  maxLines: number;
+  maxLines: number | "auto";
   textWrap: boolean;
+  defaultBubbleColor: string;
+
+  // font
+  fontSize: number;
+  defaultFontColor: string;
+  defaultFontFamily: string;
+
   isResizeCanvasOnWindowSizeChange: boolean;
-  showToolTip: boolean;
+  tooltipOptions?: TooltipOptions;
 }

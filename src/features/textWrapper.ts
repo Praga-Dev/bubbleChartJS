@@ -2,167 +2,71 @@ export function getWrappedLines(
   ctx: CanvasRenderingContext2D,
   text: string,
   maxLineWidth: number,
-  maxAllowedLines: number | undefined,
-  circleRadius: number,
-  maxCharsPerWord: number | undefined = undefined
+  maxAllowedLines: number | "auto" | undefined,
+  radius: number,
+  maxCharsPerWord: number | undefined = undefined,
+  fontSize: number = 14,
+  horizontalPadding: number = 5,
+  verticalPadding: number = 5,
+  lineHeightFactor: number = 1.2
 ): string[] {
-  if (!text || maxLineWidth <= 0) return [];
+  const availableHeight = 1.5 * (radius - verticalPadding);
+  const lineHeight = fontSize * lineHeightFactor;
 
-  let words = text.split(/\s+/);
-
-  // Set default for maxAllowedLines based on available space
-  maxAllowedLines = determineMaxLines(
-    ctx,
-    maxAllowedLines,
-    circleRadius,
-    maxLineWidth
+  const calculatedMaxLines = Math.max(
+    1,
+    Math.floor(availableHeight / lineHeight)
   );
 
-  // Handle single-word case separately
-  if (words.length === 1) {
-    return [truncateTextToFit(ctx, words[0], maxLineWidth)];
-  }
+  const maxLines =
+    maxAllowedLines === "auto" || maxAllowedLines === undefined
+      ? calculatedMaxLines
+      : Math.min(maxAllowedLines, calculatedMaxLines);
 
-  if (maxCharsPerWord) {
-    // For Now dont allow default word truncation
-    // Set default for maxCharsPerWord if not provided
-    maxCharsPerWord = determineMaxCharsPerWord(
-      ctx,
-      maxCharsPerWord,
-      maxLineWidth
-    );
+  // Adjust max line width by removing horizontal padding
+  maxLineWidth = Math.max(0, maxLineWidth - horizontalPadding);
 
-    // Apply maxCharsPerWord truncation if needed
-    words = words.map((word) => truncateWord(word, maxCharsPerWord!));
-  }
+  // Break text into words
+  const words = text.split(" ");
 
-  return wrapTextIntoLines(ctx, words, maxLineWidth, maxAllowedLines);
-}
-
-/**
- * Determines maxAllowedLines based on available space.
- */
-function determineMaxLines(
-  ctx: CanvasRenderingContext2D,
-  maxAllowedLines: number | undefined,
-  circleRadius: number, // TODO later account circleRadius to handleLabeltext-NoOfLines
-  maxLineWidth: number
-): number {
-  if (maxAllowedLines && maxAllowedLines > 0) return maxAllowedLines;
-
-  const fontSize = parseInt(ctx.font, 10) || 16;
-  const lineHeight = fontSize * 1.2;
-  return Math.floor(maxLineWidth / lineHeight) || 1; // Default: Fit within maxLineWidth
-}
-
-/**
- * Determines maxCharsPerWord based on maxLineWidth.
- */
-function determineMaxCharsPerWord(
-  ctx: CanvasRenderingContext2D,
-  maxCharsPerWord: number | undefined,
-  maxLineWidth: number
-): number {
-  if (maxCharsPerWord && maxCharsPerWord > 0) return maxCharsPerWord;
-
-  const avgCharWidth = ctx.measureText("W").width || 8; // Approximate avg char width
-  return Math.floor(maxLineWidth / avgCharWidth); // Default: Fit within maxLineWidth
-}
-
-/**
- * Wraps text into multiple lines within maxLineWidth.
- */
-function wrapTextIntoLines(
-  ctx: CanvasRenderingContext2D,
-  words: string[],
-  maxLineWidth: number,
-  maxAllowedLines: number
-): string[] {
-  const wrappedLines: string[] = [];
   let currentLine = "";
+  const lines: string[] = [];
+  let isTruncated = false;
 
   for (const word of words) {
     const testLine = currentLine ? `${currentLine} ${word}` : word;
     const testWidth = ctx.measureText(testLine).width;
 
     if (testWidth <= maxLineWidth) {
-      currentLine = testLine;
+      currentLine = testLine; // Add word to the current line
     } else {
-      if (currentLine) wrappedLines.push(currentLine);
-      currentLine = word;
-      if (wrappedLines.length >= maxAllowedLines - 1) break;
+      if (currentLine.trim()) lines.push(currentLine); // Save previous line
+      currentLine = word; // Start a new line
+    }
+
+    if (lines.length >= maxLines) {
+      isTruncated = true;
+      break; // Stop if we reach the max number of lines
     }
   }
 
-  if (currentLine) wrappedLines.push(currentLine);
-
-  return finalizeWrappedLines(ctx, wrappedLines, maxLineWidth, maxAllowedLines);
-}
-
-/**
- * Ensures the final wrapped lines do not exceed maxAllowedLines.
- */
-function finalizeWrappedLines(
-  ctx: CanvasRenderingContext2D,
-  wrappedLines: string[],
-  maxLineWidth: number,
-  maxAllowedLines: number
-): string[] {
-  if (wrappedLines.length > maxAllowedLines) {
-    wrappedLines.length = maxAllowedLines;
+  if (currentLine && lines.length < maxLines) {
+    lines.push(currentLine); // Push the last line if space allows
   }
 
-  // Truncate the last line if needed
-  if (wrappedLines.length === maxAllowedLines) {
-    wrappedLines[maxAllowedLines - 1] = truncateTextToFit(
-      ctx,
-      wrappedLines[maxAllowedLines - 1],
-      maxLineWidth
-    );
-  }
+  // Add "..." if text is truncated
+  if (isTruncated && lines.length > 0) {
+    const lastLine = lines[lines.length - 1];
+    let truncatedText = lastLine;
 
-  return wrappedLines.map((line) =>
-    ctx.measureText(line).width > maxLineWidth
-      ? truncateTextToFit(ctx, line, maxLineWidth)
-      : line
-  );
-}
-
-/**
- * Truncates text with an ellipsis if it exceeds maxLineWidth.
- */
-function truncateTextToFit(
-  ctx: CanvasRenderingContext2D,
-  text: string,
-  maxLineWidth: number
-): string {
-  text = text.trim();
-  if (!text) return ""; // Handle empty or whitespace-only input
-  if (ctx.measureText(text).width <= maxLineWidth) return text; // Return early if text fits
-
-  let left = 0,
-    right = text.length;
-
-  // binary search
-  while (left < right) {
-    const mid = Math.ceil((left + right) / 2);
-    const truncated = text.slice(0, mid) + "…";
-
-    if (ctx.measureText(truncated).width > maxLineWidth) {
-      right = mid - 1; // Reduce size
-    } else {
-      left = mid; // Expand size
+    while (
+      ctx.measureText(truncatedText + "...").width > maxLineWidth &&
+      truncatedText.length > 0
+    ) {
+      truncatedText = truncatedText.slice(0, -1); // Remove last character until it fits
     }
+
+    lines[lines.length - 1] = truncatedText + "...";
   }
-
-  return text.slice(0, left) + "…";
-}
-
-/**
- * Truncates a word to maxCharsPerWord with an ellipsis.
- */
-function truncateWord(word: string, maxCharsPerWord: number): string {
-  return word.length > maxCharsPerWord
-    ? word.slice(0, maxCharsPerWord) + "…"
-    : word;
+  return lines;
 }
