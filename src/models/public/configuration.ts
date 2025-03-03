@@ -1,6 +1,6 @@
 import { InteractionOptions } from "./config/interaction-options";
 import { TooltipOptions } from "./config/tooltip-options";
-import { DataItem } from "./dataItem";
+import { DataItem } from "./data-item";
 
 export interface Configuration extends InteractionOptions {
   data: DataItem[];

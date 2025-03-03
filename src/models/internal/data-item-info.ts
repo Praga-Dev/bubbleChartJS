@@ -1,4 +1,4 @@
-import { DataItem } from "../public/dataItem";
+import { DataItem } from "../public/data-item";
 
 export interface DataItemInfo extends DataItem {
   radius: number;

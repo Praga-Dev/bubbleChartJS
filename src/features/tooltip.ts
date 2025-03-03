@@ -1,4 +1,4 @@
-import { DataItemInfo } from "../models/internal/dataItemInfo";
+import { DataItemInfo } from "../models/internal/data-item-info";
 import { Configuration } from "../models/public/configuration";
 
 let cursor: string = "default";

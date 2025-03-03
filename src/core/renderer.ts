@@ -1,11 +1,11 @@
 import { Configuration } from "../models/public/configuration";
-import { getWrappedLines } from "../features/textWrapper";
+import { getWrappedLines } from "../features/text-wrapper";
 import { createTooltipElement, handleMouseMove } from "../features/tooltip";
 import { validateConfig } from "../utils/validation";
 import { createCanvas } from "../canvas";
-import { getChartData } from "../services/renderService";
+import { getChartData } from "../services/render-service";
 import { getFontSize } from "../utils/helper";
-import { DataItemInfo } from "../models/internal/dataItemInfo";
+import { DataItemInfo } from "../models/internal/data-item-info";
 
 export function renderChart(config: Configuration) {
   if (!validateConfig(config)) return;

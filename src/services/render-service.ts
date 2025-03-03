@@ -1,5 +1,5 @@
 import { PHYSICS } from "../constants/physics";
-import { DataItemInfo } from "../models/internal/dataItemInfo";
+import { DataItemInfo } from "../models/internal/data-item-info";
 import { Configuration } from "../models/public/configuration";
 
 export function getChartData(

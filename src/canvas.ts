@@ -1,4 +1,4 @@
-import { AppConstants } from "./constants/appConstants";
+import { AppConstants } from "./constants/app-constants";
 import { Configuration } from "./models/public/configuration";
 
 /**
