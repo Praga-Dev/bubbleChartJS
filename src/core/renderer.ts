@@ -11,7 +11,7 @@ export function renderChart(config: Configuration) {
   if (!validateConfig(config)) return;
 
   // Create & setup canvas
-  let canvas = createCanvas(config.canvasContainerId);
+  let canvas = createCanvas(config);
   if (!canvas) return;
 
   const ctx = canvas.getContext("2d");

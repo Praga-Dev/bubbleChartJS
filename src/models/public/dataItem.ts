@@ -5,7 +5,7 @@ import { ToolTipConfig } from "./config/tooltip-config";
 export interface DataItem extends BubbleAppearance, FontOptions {
   label: string;
   value: number;
-  toolTipConfig: ToolTipConfig;
+  toolTipConfig?: ToolTipConfig;
 
   // group?: string; // Groups bubbles for clustered visualization
 }
