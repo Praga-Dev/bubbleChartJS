@@ -1,4 +1,4 @@
-import { initializeChart } from "./services/chartService";
+import { initializeChart } from "./services/chart-service";
 
 // Explicitly export for TypeScript
 export { initializeChart };

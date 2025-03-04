@@ -1,29 +1,64 @@
 const path = require("path");
 
-module.exports = {
-  entry: "./src/index.ts", // Entry point for your application
-  output: {
-    filename: "index.js", // Change from bundle.js to index.js
-    path: path.resolve(__dirname, "dist"), // Output directory
-    libraryTarget: "commonjs2", // Ensure it's exportable as an npm package
-  },
+/** @type {import('webpack').Configuration} */
+const commonConfig = {
+  entry: "./src/index.ts",
+  target: "web",
   resolve: {
-    extensions: [".ts", ".js"], // Resolve TypeScript and JavaScript files
+    extensions: [".ts", ".js"],
   },
   module: {
     rules: [
       {
-        test: /\.ts$/, // Apply the loader to TypeScript files
+        test: /\.ts$/,
         use: "ts-loader",
         exclude: /node_modules/,
       },
     ],
   },
-  devServer: {
-    static: {
-      directory: path.join(__dirname, "dist"), // Serve files from the dist directory
-    },
-    compress: true,
-    port: 9000, // Port for the dev server
+  optimization: {
+    minimize: true,
   },
 };
+
+/** UMD Build (Browser + Node.js) */
+const umdConfig = {
+  ...commonConfig,
+  output: {
+    path: path.resolve(__dirname, "dist"),
+    filename: "bubbleChart.umd.js",
+    library: "BubbleChart",
+    libraryTarget: "umd",
+    globalObject: "this",
+    umdNamedDefine: true,
+  },
+};
+
+/** ESM Build (Modern JavaScript) */
+const esmConfig = {
+  ...commonConfig,
+  output: {
+    path: path.resolve(__dirname, "dist"),
+    filename: "bubbleChart.esm.js",
+    library: {
+      type: "module",
+    },
+  },
+  experiments: {
+    outputModule: true, // Required for ESM builds
+  },
+};
+
+/** CommonJS Build (Node.js) */
+const cjsConfig = {
+  ...commonConfig,
+  output: {
+    path: path.resolve(__dirname, "dist"),
+    filename: "bubbleChart.cjs.js",
+    library: {
+      type: "commonjs2",
+    },
+  },
+};
+
+module.exports = [umdConfig, esmConfig, cjsConfig];

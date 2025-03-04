@@ -1,5 +1,5 @@
 import { PHYSICS } from "../constants/physics";
-import { DataItemInfo } from "../models/internal/dataItemInfo";
+import { DataItemInfo } from "../models/internal/data-item-info";
 import { Configuration } from "../models/public/configuration";
 
 export function getChartData(
@@ -155,16 +155,30 @@ export function getChartData(
       sortedData.forEach((other) => {
         if (current === other) return;
 
-        // Add additional center attraction
-        const dx = centerX - current.x;
-        const dy = centerY - current.y;
+        const dx = current.x - other.x;
+        const dy = current.y - other.y;
         const distance = Math.hypot(dx, dy);
+        const minDistance = current.radius + other.radius;
+
+        // Apply repulsion force using PHYSICS.forceStrength
+        if (distance < minDistance * 1.5) {
+          // Only apply when bubbles are close
+          const repulsionForce =
+            PHYSICS.forceStrength * (minDistance / Math.max(distance, 0.1));
+          dxTotal += (dx / distance) * repulsionForce;
+          dyTotal += (dy / distance) * repulsionForce;
+        }
+
+        // Add additional center attraction
+        const dxCenter = centerX - current.x;
+        const dyCenter = centerY - current.y;
+        const centerDistance = Math.hypot(dxCenter, dyCenter);
 
         // Value-based attraction strength (weaker for smaller values)
         const attractionStrength = 0.02 * (current.value / maxValue);
 
-        current.x += (dx / distance) * attractionStrength;
-        current.y += (dy / distance) * attractionStrength;
+        current.x += (dxCenter / centerDistance) * attractionStrength;
+        current.y += (dyCenter / centerDistance) * attractionStrength;
       });
 
       // 3. Strong center attraction with value-based weighting
@@ -184,6 +198,10 @@ export function getChartData(
 
       current.x += dxCenter * attractionStrength;
       current.y += dyCenter * attractionStrength;
+
+      // Apply accumulated forces with damping
+      current.x += dxTotal * (1 - PHYSICS.damping);
+      current.y += dyTotal * (1 - PHYSICS.damping);
     });
 
     // Combined collision resolution
@@ -215,10 +233,13 @@ export function getChartData(
         const dx = current.x - other.x;
         const dy = current.y - other.y;
         const distance = Math.hypot(dx, dy);
-        const minDistance = current.radius + other.radius - 5; // Allow 2px overlap
+        // Adjusted to allow slight overlap for collision effect
+        const minDistance = current.radius + other.radius - 5; // Allow 5px overlap
 
         if (distance < minDistance) {
-          const overlap = (minDistance - distance) * 0.3; // Gentle correction
+          // Use forceStrength to influence collision response
+          const overlap =
+            (minDistance - distance) * (0.3 + PHYSICS.forceStrength * 5);
           const angle = Math.atan2(dy, dx);
 
           // Mass-weighted adjustment

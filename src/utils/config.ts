@@ -5,15 +5,14 @@ import { Configuration } from "../models/public/configuration";
  */
 export const DEFAULT_CONFIG: Omit<Configuration, "canvasContainerId" | "data"> =
   {
-    colorMap: {},
-    defaultBubbleColor: "#3498db",
-    fontColor: "#ffffff",
+    defaultBubbleColor: "#3498DB",
+    defaultFontColor: "#ffffff",
     minRadius: 10,
-    maxLines: 3,
+    maxLines: "auto",
     textWrap: true,
     isResizeCanvasOnWindowSizeChange: true,
     fontSize: 14,
-    fontFamily: "Arial",
+    defaultFontFamily: "Arial",
     showToolTip: true,
   };
 

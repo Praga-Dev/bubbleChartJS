@@ -30,6 +30,12 @@ Social Media Metrics – Visualize engagement levels across platforms.
 
 Scientific Research – Show relationships in grouped experimental data.
 
+### 🎨 Example Output
+
+Here’s an example of the bubble chart generated using this package:
+
+![Stacked Bubble Chart Example](./assets/bubble-chart.png)
+
 ## Installation
 
 You can install `bubbleChartJs` via npm:
@@ -45,29 +51,38 @@ npm install bubble-chart-js
 ```js
 import BubbleChart from "bubblechartjs";
 
-const config = {
-  canvasContainerId: "bubbleChartCanvas",
-  data: [
-    { label: "A", value: 100 },
-    { label: "B", value: 80 },
-    { label: "C", value: 60 },
-  ],
-  colorMap: {
-    A: "#ff5733",
-    B: "#33ff57",
-    C: "#3357ff",
-  },
-  defaultBubbleColor: "#cccccc",
-  fontSize: 14,
-  fontFamily: "Arial",
-  fontColor: "#000000",
-  minRadius: 10,
-  maxLines: 2,
-  textWrap: true,
-  isResizeCanvasOnWindowSizeChange: true,
+const tooltipOptions = {
+  fontStyle: "italic",
+  fontWeight: 800,
+  textAlign: "center",
+  textDecoration: "underline",
+  textTransform: "uppercase",
+  fontColor: "#FFF",
 };
 
-initializeChart(config);
+const data = [
+  { label: "Biryani Battles", value: 89, bubbleColor: "#ff5733" },
+  { label: "Chai vs. Coffee", value: 70, bubbleColor: "#c70039" },
+  { label: "Bollywood Blockbusters", value: 90, bubbleColor: "#900c3f" },
+  { label: "IPL Fever", value: 85, bubbleColor: "#ffc300" },
+  { label: "Himalayan Treks", value: 65, bubbleColor: "#4caf50" },
+  { label: "Diwali Firecrackers", value: 95, bubbleColor: "#ff8c00" },
+  { label: "Street Food Craze", value: 75, bubbleColor: "#e91e63" },
+  { label: "Fastest Century Records", value: 88, bubbleColor: "#3f51b5" },
+  { label: "Royal Enfield Craze", value: 60, bubbleColor: "#795548" },
+  { label: "Digital Payment Boom", value: 93, bubbleColor: "#00bcd4" },
+];
+
+const chartoptions = {
+  canvasContainerId: "bubbleChart",
+  data: data,
+  fontSize: 14,
+  maxLines: 2,
+  tooltipOptions: tooltipOptions,
+};
+
+// Initialize chart
+initializeChart(chartoptions);
 ```
 
 ## Configuration Options
@@ -106,4 +121,4 @@ Contributions, issues, and feature requests are welcome!
 
 ---
 
-Made with ❤️ by Pragadeeshwaran
+Made with ❤️ by Pragadeesh
