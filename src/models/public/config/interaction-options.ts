@@ -10,8 +10,8 @@ export interface InteractionOptions {
     | "not-allowed"
     | "help"; // Allows customizing the cursor when hovering over bubbles
 
+  onBubbleClick?: (bubbleData: any, event: MouseEvent) => void; // Function triggered on click
   // hoverEffect?: "scale" | "highlight" | "none"; // Hover effect type
-  // clickAction?: () => void; // Function triggered on click
   // draggable?: boolean; // Enables dragging bubbles
   // resizable?: boolean; // Allows dynamic resizing
   // animation?: boolean; // Enables animations

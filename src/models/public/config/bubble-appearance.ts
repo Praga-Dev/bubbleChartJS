@@ -1,10 +1,3 @@
-export interface BubbleAppearance {
-  bubbleColor?: string; // Bubble background color
-  borderThickness?: number; // Border thickness
-  borderColor?: string; // Border color
-  opacity?: number; // 0 (transparent) to 1 (fully visible)
-}
-
 /**
  * Defines the appearance properties for a bubble.
  */

@@ -3,6 +3,22 @@ import { Configuration } from "../models/public/configuration";
 
 let cursor: string = "default";
 
+function appendTooltip(tooltip: HTMLDivElement) {
+  const body = document.body;
+
+  if (body) {
+    // Insert the new div as the first child of the body
+    if (body.firstChild) {
+      body.insertBefore(tooltip, body.firstChild);
+    } else {
+      // If the body is empty, append the new div
+      body.appendChild(tooltip);
+    }
+  } else {
+    console.error("Body element not found.");
+  }
+}
+
 export function createTooltipElement(config: Configuration): HTMLDivElement {
   const formattedToolTip =
     config.data[0].toolTipConfig?.tooltipFormattedData?.trim();
@@ -11,17 +27,13 @@ export function createTooltipElement(config: Configuration): HTMLDivElement {
     tempContainer.innerHTML = formattedToolTip.trim();
 
     // Append to DOM
-    const container = config.canvasContainerId
-      ? document.getElementById(config.canvasContainerId)
-      : null;
-
     const tooltip = tempContainer.firstElementChild as HTMLDivElement;
-    (container || document.body).appendChild(tooltip);
+    appendTooltip(tooltip);
     return tooltip;
   }
 
   const tooltip = document.createElement("div");
-  tooltip.id = "tooltip";
+  tooltip.id = "bubbleChartTooltip";
   tooltip.style.display = "none";
 
   const tooltipOptions = config?.tooltipOptions ?? {};
@@ -73,12 +85,24 @@ export function createTooltipElement(config: Configuration): HTMLDivElement {
   });
 
   // Append to DOM
-  const container = config.canvasContainerId
-    ? document.getElementById(config.canvasContainerId)
-    : null;
-
-  (container || document.body).appendChild(tooltip);
+  appendTooltip(tooltip);
   return tooltip;
+}
+
+export function onBubbleClickEventHandler( // TODO : move to interactions.ts
+  event: MouseEvent,
+  data: DataItemInfo[],
+  canvas: HTMLCanvasElement,
+  config: Configuration
+) {
+  const { mouseX, mouseY } = getMousePosition(event, canvas);
+  const hoveredItem = findHoveredItem(mouseX, mouseY, data);
+
+  if (hoveredItem === null || hoveredItem === undefined) return;
+
+  if (config.onBubbleClick) {
+    config.onBubbleClick(hoveredItem, event); // Call the click handler
+  }
 }
 
 export function handleMouseMove(
@@ -91,15 +115,19 @@ export function handleMouseMove(
   const { mouseX, mouseY } = getMousePosition(event, canvas);
   const hoveredItem = findHoveredItem(mouseX, mouseY, data);
 
+  if (hoveredItem === null || hoveredItem === undefined) return;
+
   if (config?.cursorType) {
     cursor = config?.cursorType;
   }
 
-  if (hoveredItem) {
-    updateTooltip(event, hoveredItem, canvas, tooltip);
-  } else {
-    canvas.style.cursor = "default";
-    tooltip.style.display = "none";
+  if (tooltip) {
+    if (hoveredItem) {
+      updateTooltip(event, hoveredItem, canvas, tooltip);
+    } else {
+      canvas.style.cursor = "default";
+      tooltip.style.display = "none";
+    }
   }
 }
 

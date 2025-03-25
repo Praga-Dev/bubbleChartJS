@@ -1,6 +1,10 @@
 import { Configuration } from "../models/public/configuration";
 import { getWrappedLines } from "../features/text-wrapper";
-import { createTooltipElement, handleMouseMove } from "../features/tooltip";
+import {
+  createTooltipElement,
+  handleMouseMove,
+  onBubbleClickEventHandler,
+} from "../features/tooltip";
 import { validateConfig } from "../utils/validation";
 import { createCanvas } from "../canvas";
 import { getChartData } from "../services/render-service";
@@ -152,14 +156,28 @@ export function renderChart(config: Configuration) {
   // Initial draw
   draw();
 
+  let tooltip: any;
+
   if (config.showToolTip) {
-    const tooltip = createTooltipElement(config);
-    let animationFrameId: number | null = null;
-    canvas.addEventListener("mousemove", (event) => {
-      if (animationFrameId) return; // Prevent excessive calls
-      animationFrameId = requestAnimationFrame(() => {
-        handleMouseMove(event, sortedData, canvas, tooltip, config);
-        animationFrameId = null; // Reset after execution
+    tooltip = createTooltipElement(config);
+  }
+  let animationFrameId: number | null = null;
+  canvas.addEventListener("mousemove", (event) => {
+    if (animationFrameId) return; // Prevent excessive calls
+    animationFrameId = requestAnimationFrame(() => {
+      handleMouseMove(event, sortedData, canvas, tooltip, config);
+      animationFrameId = null; // Reset after execution
+    });
+  });
+
+  if (config.onBubbleClick) {
+    let clickFrameId: number | null = null; // Track animation frame
+    canvas.addEventListener("click", (event) => {
+      if (clickFrameId) return; // Prevent multiple executions in a frame
+
+      clickFrameId = requestAnimationFrame(() => {
+        onBubbleClickEventHandler(event, sortedData, canvas, config);
+        clickFrameId = null; // Reset after execution
       });
     });
   }

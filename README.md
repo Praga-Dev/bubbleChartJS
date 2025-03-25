@@ -34,7 +34,7 @@ Scientific Research – Show relationships in grouped experimental data.
 
 Here’s an example of the bubble chart generated using this package:
 
-![Stacked Bubble Chart Example](./assets/bubble-chart.png)
+![Stacked Bubble Chart Example](https://github.com/Praga-Dev/bubbleChartJS/blob/HEAD/assets/bubble-chart.png)
 
 ## Installation
 
@@ -93,20 +93,19 @@ The `BubbleChart` class accepts a configuration object with the following proper
 
 The `BubbleChart` class accepts a configuration object with the following properties:
 
-| Property                           | Type                     | Required | Optional | Description                                                         | Default     |
-| ---------------------------------- | ------------------------ | -------- | -------- | ------------------------------------------------------------------- | ----------- |
-| `canvasContainerId`                | `string`                 | ✔️ Yes   | ❌ No    | The ID of the container where the chart will be rendered.           | `-`         |
-| `data`                             | `DataItem[]`             | ✔️ Yes   | ❌ No    | An array of objects containing `label` and `value` for each bubble. | `-`         |
-| `colorMap`                         | `Record<string, string>` | ❌ No    | ✔️ Yes   | A mapping of labels to specific bubble colors.                      | `{}`        |
-| `defaultBubbleColor`               | `string`                 | ❌ No    | ✔️ Yes   | Default color for bubbles if not specified in `colorMap`.           | `"#3498db"` |
-| `fontSize`                         | `number`                 | ❌ No    | ✔️ Yes   | Font size for bubble labels.                                        | `14`        |
-| `fontFamily`                       | `string`                 | ❌ No    | ✔️ Yes   | Font family for text rendering.                                     | `"Arial"`   |
-| `fontColor`                        | `string`                 | ❌ No    | ✔️ Yes   | Color of the text inside bubbles.                                   | `"#ffffff"` |
-| `minRadius`                        | `number`                 | ❌ No    | ✔️ Yes   | Minimum radius for the bubbles.                                     | `10`        |
-| `maxLines`                         | `number`                 | ❌ No    | ✔️ Yes   | Maximum number of lines allowed for text wrapping.                  | `3`         |
-| `textWrap`                         | `boolean`                | ❌ No    | ✔️ Yes   | Enables or disables text wrapping inside bubbles.                   | `true`      |
-| `isResizeCanvasOnWindowSizeChange` | `boolean`                | ❌ No    | ✔️ Yes   | Whether the chart should resize when the window size changes.       | `true`      |
-| `showToolTip`                      | `boolean`                | ❌ No    | ✔️ Yes   | Whether the chart should display the tooltip or not.                | `true`      |
+| Property                           | Type         | Required | Optional | Description                                                         | Default     |
+| ---------------------------------- | ------------ | -------- | -------- | ------------------------------------------------------------------- | ----------- |
+| `canvasContainerId`                | `string`     | ✔️ Yes   | ❌ No    | The ID of the container where the chart will be rendered.           | `-`         |
+| `data`                             | `DataItem[]` | ✔️ Yes   | ❌ No    | An array of objects containing `label` and `value` for each bubble. | `-`         |
+| `defaultBubbleColor`               | `string`     | ❌ No    | ✔️ Yes   | Default color for bubbles if not specified in `colorMap`.           | `"#3498db"` |
+| `fontSize`                         | `number`     | ❌ No    | ✔️ Yes   | Font size for bubble labels.                                        | `14`        |
+| `fontFamily`                       | `string`     | ❌ No    | ✔️ Yes   | Font family for text rendering.                                     | `"Arial"`   |
+| `fontColor`                        | `string`     | ❌ No    | ✔️ Yes   | Color of the text inside bubbles.                                   | `"#ffffff"` |
+| `minRadius`                        | `number`     | ❌ No    | ✔️ Yes   | Minimum radius for the bubbles.                                     | `10`        |
+| `maxLines`                         | `number`     | ❌ No    | ✔️ Yes   | Maximum number of lines allowed for text wrapping.                  | `3`         |
+| `textWrap`                         | `boolean`    | ❌ No    | ✔️ Yes   | Enables or disables text wrapping inside bubbles.                   | `true`      |
+| `isResizeCanvasOnWindowSizeChange` | `boolean`    | ❌ No    | ✔️ Yes   | Whether the chart should resize when the window size changes.       | `true`      |
+| `showToolTip`                      | `boolean`    | ❌ No    | ✔️ Yes   | Whether the chart should display the tooltip or not.                | `true`      |
 
 ✔️ **Required**: These properties must be provided.
 ✔️ **Optional**: If not provided, the default value will be used.
