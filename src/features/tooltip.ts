@@ -89,6 +89,22 @@ export function createTooltipElement(config: Configuration): HTMLDivElement {
   return tooltip;
 }
 
+export function onBubbleClickEventHandler( // TODO : move to interactions.ts
+  event: MouseEvent,
+  data: DataItemInfo[],
+  canvas: HTMLCanvasElement,
+  config: Configuration
+) {
+  const { mouseX, mouseY } = getMousePosition(event, canvas);
+  const hoveredItem = findHoveredItem(mouseX, mouseY, data);
+
+  if (hoveredItem === null || hoveredItem === undefined) return;
+
+  if (config.onBubbleClick) {
+    config.onBubbleClick(hoveredItem, event); // Call the click handler
+  }
+}
+
 export function handleMouseMove(
   event: MouseEvent,
   data: DataItemInfo[],
@@ -99,15 +115,19 @@ export function handleMouseMove(
   const { mouseX, mouseY } = getMousePosition(event, canvas);
   const hoveredItem = findHoveredItem(mouseX, mouseY, data);
 
+  if (hoveredItem === null || hoveredItem === undefined) return;
+
   if (config?.cursorType) {
     cursor = config?.cursorType;
   }
 
-  if (hoveredItem) {
-    updateTooltip(event, hoveredItem, canvas, tooltip);
-  } else {
-    canvas.style.cursor = "default";
-    tooltip.style.display = "none";
+  if (tooltip) {
+    if (hoveredItem) {
+      updateTooltip(event, hoveredItem, canvas, tooltip);
+    } else {
+      canvas.style.cursor = "default";
+      tooltip.style.display = "none";
+    }
   }
 }
 
