@@ -4,11 +4,14 @@ export function getWrappedLines(
   maxLineWidth: number,
   maxAllowedLines: number | "auto" | undefined,
   radius: number,
-  maxCharsPerWord: number | undefined = undefined,
-  fontSize: number = 14,
-  horizontalPadding: number = 5,
+  maxCharsPerWord: number | undefined = undefined, // TODO :  need support
+  fontSize: number = 14, // TODO :  take all default values from constants
+  horizontalPadding: number = 2,
   verticalPadding: number = 5,
-  lineHeightFactor: number = 1.2
+  lineHeightFactor: number = 1.2,
+  fontWeight: number = 400,
+  fontStyle: "normal" | "italic" | "oblique" = "normal",
+  fontFamily: string = "Arial"
 ): string[] {
   const availableHeight = 1.5 * (radius - verticalPadding);
   const lineHeight = fontSize * lineHeightFactor;
@@ -26,15 +29,23 @@ export function getWrappedLines(
   // Adjust max line width by removing horizontal padding
   maxLineWidth = Math.max(0, maxLineWidth - horizontalPadding);
 
+  if (text == "Billing Consumption") {
+    console.log(maxLineWidth, "maxLineWidth");
+  }
+
   // Break text into words
   const words = text.split(" ");
 
   let currentLine = "";
   const lines: string[] = [];
   let isTruncated = false;
+  let isWordTruncated = false;
 
   for (const word of words) {
     const testLine = currentLine ? `${currentLine} ${word}` : word;
+
+    // Apply font style and weight if provided
+    ctx.font = `${fontWeight || ""} ${fontStyle || ""} ${fontSize}px ${fontFamily}`; // Support to optimize the textwrap incase fontweight or fontstyle are applied
     const testWidth = ctx.measureText(testLine).width;
 
     if (testWidth <= maxLineWidth) {
@@ -42,6 +53,24 @@ export function getWrappedLines(
     } else {
       if (currentLine.trim()) lines.push(currentLine); // Save previous line
       currentLine = word; // Start a new line
+
+      const currentLineWidth = ctx.measureText(currentLine).width;
+
+      // truncate the word
+      if (currentLineWidth > maxLineWidth) {
+        let truncatedText = currentLine;
+
+        while (
+          ctx.measureText(truncatedText + "...").width > maxLineWidth &&
+          truncatedText.length > 0
+        ) {
+          truncatedText = truncatedText.slice(0, -1); // Remove last character until it fits
+        }
+
+        lines.push(truncatedText + "...");
+        isWordTruncated = true;
+        break; // Stop if word truncated
+      }
     }
 
     if (lines.length >= maxLines) {
@@ -50,7 +79,7 @@ export function getWrappedLines(
     }
   }
 
-  if (currentLine && lines.length < maxLines) {
+  if (currentLine && lines.length < maxLines && !isWordTruncated) {
     lines.push(currentLine); // Push the last line if space allows
   }
 
