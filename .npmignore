@@ -2,3 +2,12 @@ node_modules/
 src/
 tests/
 .git/
+tsconfig.json
+webpack.config.js
+
+
+
+
+
+
+
