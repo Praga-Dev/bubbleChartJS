@@ -61,24 +61,71 @@ const tooltipOptions = {
 };
 
 const data = [
-  { label: "Biryani Battles", value: 89, bubbleColor: "#ff5733" },
-  { label: "Chai vs. Coffee", value: 70, bubbleColor: "#c70039" },
-  { label: "Bollywood Blockbusters", value: 90, bubbleColor: "#900c3f" },
-  { label: "IPL Fever", value: 85, bubbleColor: "#ffc300" },
-  { label: "Himalayan Treks", value: 65, bubbleColor: "#4caf50" },
-  { label: "Diwali Firecrackers", value: 95, bubbleColor: "#ff8c00" },
-  { label: "Street Food Craze", value: 75, bubbleColor: "#e91e63" },
-  { label: "Fastest Century Records", value: 88, bubbleColor: "#3f51b5" },
-  { label: "Royal Enfield Craze", value: 60, bubbleColor: "#795548" },
-  { label: "Digital Payment Boom", value: 93, bubbleColor: "#00bcd4" },
+  {
+    label: "Rocket Fuel Orders",
+    value: 207,
+    bubbleColor: "#ff5733",
+    fontColor: "#FFFFFF",
+    fontWeight: 600,
+  },
+  {
+    label: "Time Machine Repairs",
+    value: 154,
+    bubbleColor: "#c70039",
+    fontColor: "#FFF",
+    fontWeight: 600,
+  },
+  {
+    label: "AI Overlord Complaints",
+    value: 192,
+    bubbleColor: "#900c3f",
+    fontColor: "#000",
+  },
+  {
+    label: "Quantum Internet Activation",
+    value: 73,
+    bubbleColor: "#ffc300",
+    fontColor: "#000",
+  },
+  {
+    label: "Zero-Gravity Plumbing Issues",
+    value: 96,
+    bubbleColor: "#4caf50",
+    fontColor: "#000",
+  },
+  {
+    label: "Hologram Tech Support",
+    value: 119,
+    bubbleColor: "#ff8c00",
+    fontColor: "#000",
+  },
+  {
+    label: "Teleportation Delay Reports",
+    value: 87,
+    bubbleColor: "#03875c",
+    fontColor: "#000",
+  },
+  {
+    label: "Neural Chip Upgrades",
+    value: 163,
+    bubbleColor: "#3f51b5",
+    fontColor: "#000",
+  },
+  {
+    label: "Intergalactic Toll Fees",
+    value: 132,
+    bubbleColor: "#795548",
+    fontColor: "#000",
+  },
 ];
 
-const chartoptions = {
+const chartOptions = {
   canvasContainerId: "bubbleChart",
   data: data,
-  fontSize: 14,
-  maxLines: 2,
-  tooltipOptions: tooltipOptions,
+  fontSize: 10,
+  onBubbleClick: (bubbleData, event) => {
+    alert(`You clicked on: ${bubbleData.label}`);
+  },
 };
 
 // Initialize chart
@@ -93,19 +140,20 @@ The `BubbleChart` class accepts a configuration object with the following proper
 
 The `BubbleChart` class accepts a configuration object with the following properties:
 
-| Property                           | Type         | Required | Optional | Description                                                         | Default     |
-| ---------------------------------- | ------------ | -------- | -------- | ------------------------------------------------------------------- | ----------- |
-| `canvasContainerId`                | `string`     | ✔️ Yes   | ❌ No    | The ID of the container where the chart will be rendered.           | `-`         |
-| `data`                             | `DataItem[]` | ✔️ Yes   | ❌ No    | An array of objects containing `label` and `value` for each bubble. | `-`         |
-| `defaultBubbleColor`               | `string`     | ❌ No    | ✔️ Yes   | Default color for bubbles if not specified in `colorMap`.           | `"#3498db"` |
-| `fontSize`                         | `number`     | ❌ No    | ✔️ Yes   | Font size for bubble labels.                                        | `14`        |
-| `fontFamily`                       | `string`     | ❌ No    | ✔️ Yes   | Font family for text rendering.                                     | `"Arial"`   |
-| `fontColor`                        | `string`     | ❌ No    | ✔️ Yes   | Color of the text inside bubbles.                                   | `"#ffffff"` |
-| `minRadius`                        | `number`     | ❌ No    | ✔️ Yes   | Minimum radius for the bubbles.                                     | `10`        |
-| `maxLines`                         | `number`     | ❌ No    | ✔️ Yes   | Maximum number of lines allowed for text wrapping.                  | `3`         |
-| `textWrap`                         | `boolean`    | ❌ No    | ✔️ Yes   | Enables or disables text wrapping inside bubbles.                   | `true`      |
-| `isResizeCanvasOnWindowSizeChange` | `boolean`    | ❌ No    | ✔️ Yes   | Whether the chart should resize when the window size changes.       | `true`      |
-| `showToolTip`                      | `boolean`    | ❌ No    | ✔️ Yes   | Whether the chart should display the tooltip or not.                | `true`      |
+| Property                           | Type         | Required | Optional | Description                                                                                       | Default     |
+| ---------------------------------- | ------------ | -------- | -------- | ------------------------------------------------------------------------------------------------- | ----------- |
+| `canvasContainerId`                | `string`     | ✔️ Yes   | ❌ No    | The ID of the container where the chart will be rendered.                                         | `-`         |
+| `data`                             | `DataItem[]` | ✔️ Yes   | ❌ No    | An array of objects containing `label` and `value` for each bubble.                               | `-`         |
+| `defaultBubbleColor`               | `string`     | ❌ No    | ✔️ Yes   | Default color for bubbles if not specified in `colorMap`.                                         | `"#3498db"` |
+| `fontSize`                         | `number`     | ❌ No    | ✔️ Yes   | Font size for bubble labels.                                                                      | `14`        |
+| `fontFamily`                       | `string`     | ❌ No    | ✔️ Yes   | Font family for text rendering.                                                                   | `"Arial"`   |
+| `fontColor`                        | `string`     | ❌ No    | ✔️ Yes   | Color of the text inside bubbles.                                                                 | `"#ffffff"` |
+| `minRadius`                        | `number`     | ❌ No    | ✔️ Yes   | Minimum radius for the bubbles.                                                                   | `10`        |
+| `maxLines`                         | `number`     | ❌ No    | ✔️ Yes   | Maximum number of lines allowed for text wrapping.                                                | `3`         |
+| `textWrap`                         | `boolean`    | ❌ No    | ✔️ Yes   | Enables or disables text wrapping inside bubbles.                                                 | `true`      |
+| `isResizeCanvasOnWindowSizeChange` | `boolean`    | ❌ No    | ✔️ Yes   | Whether the chart should resize when the window size changes.                                     | `true`      |
+| `showToolTip`                      | `boolean`    | ❌ No    | ✔️ Yes   | Whether the chart should display the tooltip or not.                                              | `true`      |
+| `onBubbleClick`                    | `method`     | ❌ No    | ✔️ Yes   | Callback function triggered when a bubble is clicked. Provides the clicked bubble data and event. | `true`      |
 
 ✔️ **Required**: These properties must be provided.
 ✔️ **Optional**: If not provided, the default value will be used.
