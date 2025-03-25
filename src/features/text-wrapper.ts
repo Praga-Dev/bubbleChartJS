@@ -29,10 +29,6 @@ export function getWrappedLines(
   // Adjust max line width by removing horizontal padding
   maxLineWidth = Math.max(0, maxLineWidth - horizontalPadding);
 
-  if (text == "Billing Consumption") {
-    console.log(maxLineWidth, "maxLineWidth");
-  }
-
   // Break text into words
   const words = text.split(" ");
 
