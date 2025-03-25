@@ -115,8 +115,6 @@ export function handleMouseMove(
   const { mouseX, mouseY } = getMousePosition(event, canvas);
   const hoveredItem = findHoveredItem(mouseX, mouseY, data);
 
-  if (hoveredItem === null || hoveredItem === undefined) return;
-
   if (config?.cursorType) {
     cursor = config?.cursorType;
   }
