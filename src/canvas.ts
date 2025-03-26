@@ -13,11 +13,18 @@ export function createCanvas(config: Configuration): HTMLCanvasElement | null {
     return null;
   }
 
+  const existingCanvas = canvasContainer.querySelector("canvas");
+
+  if (existingCanvas) {
+    console.error("A canvas already exists inside the container.");
+    return null;
+  }
+
   const canvas = document.createElement("canvas") as HTMLCanvasElement;
+
+  // Get parent container dimensions
   canvas.width = canvasContainer.offsetWidth;
   canvas.height = canvasContainer.offsetHeight;
-
-  console.log(config.canvasBackgroundColor);
 
   Object.assign(canvas.style, {
     border: config.canvasBorderColor?.trim()

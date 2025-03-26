@@ -6,17 +6,16 @@ let cursor: string = "default";
 function appendTooltip(tooltip: HTMLDivElement) {
   const body = document.body;
 
-  if (body) {
-    // Insert the new div as the first child of the body
-    if (body.firstChild) {
-      body.insertBefore(tooltip, body.firstChild);
-    } else {
-      // If the body is empty, append the new div
-      body.appendChild(tooltip);
-    }
-  } else {
+  if (!body) {
     console.error("Body element not found.");
+    return;
   }
+
+  if (body.querySelector("#bubbleChartTooltip")) {
+    return; // Tooltip already exists, no need to append
+  }
+
+  body.prepend(tooltip); // `prepend` automatically handles both cases (empty & non-empty body)
 }
 
 export function createTooltipElement(config: Configuration): HTMLDivElement {
@@ -33,7 +32,7 @@ export function createTooltipElement(config: Configuration): HTMLDivElement {
   }
 
   const tooltip = document.createElement("div");
-  tooltip.id = "bubbleChartTooltip";
+  tooltip.id = "bubbleChartTooltip"; // TODO : get from constants
   tooltip.style.display = "none";
 
   const tooltipOptions = config?.tooltipOptions ?? {};

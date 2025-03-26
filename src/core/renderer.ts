@@ -8,7 +8,7 @@ import {
 import { validateConfig } from "../utils/validation";
 import { createCanvas } from "../canvas";
 import { getChartData } from "../services/render-service";
-import { getFontSize } from "../utils/helper";
+import { getFontSize, isFontAvailable } from "../utils/helper";
 import { DataItemInfo } from "../models/internal/data-item-info";
 
 export function renderChart(config: Configuration) {
@@ -71,8 +71,11 @@ export function renderChart(config: Configuration) {
       ctx.stroke();
 
       // Text styling
+      const ctxFont = `${fontStyle} ${fontWeight} ${fontSize}px ${fontFamily}`;
+
       ctx.fillStyle = fontColor;
-      ctx.font = `${fontStyle} ${fontWeight} ${fontSize}px ${fontFamily}`;
+      ctx.font = ctxFont;
+
       ctx.textAlign = textAlign;
       ctx.textBaseline = textBaseline;
 
@@ -97,7 +100,11 @@ export function renderChart(config: Configuration) {
           item.label,
           maxWidth,
           config.maxLines,
-          radius
+          radius,
+          fontSize,
+          fontWeight,
+          fontStyle,
+          fontFamily
         );
         const startY = y - ((lines.length - 1) * lineHeight) / 2;
 
@@ -115,27 +122,48 @@ export function renderChart(config: Configuration) {
    * If a property is provided, it retains its original value.
    */
   function getDefaultValues(item: DataItemInfo, config: Configuration) {
-    const ctxStyleConfig = {
+    return {
       // Bubble properties
       x: item.x,
       y: item.y,
-      radius: Math.max(item.radius, config.minRadius), // Ensure minimum radius
-      bubbleColor: item.bubbleColor ?? config.defaultBubbleColor,
+      radius: Math.max(item.radius || 0, config.minRadius || 10), // Ensure a minimum valid radius
+      bubbleColor: item.bubbleColor ?? config.defaultBubbleColor ?? "#3498db",
       borderColor: item.borderColor ?? "black",
-      borderThickness: item.borderThickness ?? 0.25,
-      opacity: item.opacity ?? 1, // Default opacity to 1 (fully visible)
+      borderThickness: Math.max(item.borderThickness ?? 0.25, 0), // Ensure non-negative thickness
+      opacity:
+        item.opacity !== undefined ? Math.max(0, Math.min(1, item.opacity)) : 1, // Clamp opacity between 0 and 1
 
       // Font properties
-      fontFamily: item.fontFamily ?? config.defaultFontFamily,
-      fontStyle: item.fontStyle ?? "normal",
-      fontWeight: item.fontWeight ?? 400,
+      fontStyle: item.fontStyle || "normal",
+      fontWeight:
+        typeof item.fontWeight === "number" &&
+        item.fontWeight >= 100 &&
+        item.fontWeight <= 900
+          ? item.fontWeight
+          : 400, // Clamp within 100-900
       textAlign: item.textAlign ?? "center",
       textTransform: item.textTransform ?? "none",
-      fontColor: item.fontColor ?? config.defaultFontColor,
+      fontColor: item.fontColor ?? config.defaultFontColor ?? "#000",
       textBaseline: item.textBaseline ?? "middle",
-      fontSize: getFontSize(item.radius, config.fontSize, item.fontWeight),
+
+      // Font size logic: Ensures it is valid & readable
+      fontSize: Math.max(
+        getFontSize(
+          item.radius || config.minRadius || 10, // Ensure radius is valid
+          config.fontSize ?? 14, // Use config fontSize if available
+          item.fontWeight ?? 400
+        ),
+        8 // Enforce a readable minimum font size
+      ),
+
+      // Font family with robust fallback
+      fontFamily:
+        item.fontFamily &&
+        typeof item.fontFamily === "string" &&
+        item.fontFamily !== "Arial"
+          ? `${item.fontFamily}, Arial, sans-serif`
+          : `${config.defaultFontFamily ?? "Arial"}, sans-serif`,
     };
-    return ctxStyleConfig;
   }
 
   // Robust approach that handles resizing:
