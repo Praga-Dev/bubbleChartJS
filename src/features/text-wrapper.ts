@@ -4,14 +4,14 @@ export function getWrappedLines(
   maxLineWidth: number,
   maxAllowedLines: number | "auto" | undefined,
   radius: number,
-  maxCharsPerWord: number | undefined = undefined, // TODO :  need support
   fontSize: number = 14, // TODO :  take all default values from constants
+  fontWeight: number = 400,
+  fontStyle: "normal" | "italic" | "oblique" = "normal",
+  fontFamily: string = "Arial",
   horizontalPadding: number = 2,
   verticalPadding: number = 5,
   lineHeightFactor: number = 1.2,
-  fontWeight: number = 400,
-  fontStyle: "normal" | "italic" | "oblique" = "normal",
-  fontFamily: string = "Arial"
+  maxCharsPerWord: number | undefined = undefined // TODO :  need support
 ): string[] {
   const availableHeight = 1.5 * (radius - verticalPadding);
   const lineHeight = fontSize * lineHeightFactor;
