@@ -58,13 +58,13 @@ export function getChartData(
   // const internalMaxRadius = canvasMinDimension * 0.65; // 15% of smallest dimension
 
   const internalMaxRadius = Math.min(
-    maxPossibleRadius * 0.5, // Use 80% of maximum possible space
-    70 // Absolute maximum
+    maxPossibleRadius * 0.5, // Keep 50% of available space
+    Math.min(canvas.width, canvas.height) * 0.2 // Ensure it scales with canvas
   );
 
   const internalMinRadius = Math.max(
     internalMaxRadius * 0.3, // Minimum 30% of max radius
-    25 // Absolute minimum
+    Math.min(canvas.width, canvas.height) * 0.05 // Ensure a reasonable minimum size
   );
 
   // Value-based radius calculation with padding consideration
