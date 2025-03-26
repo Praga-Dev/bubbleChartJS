@@ -8,7 +8,7 @@ export function getWrappedLines(
   fontWeight: number = 400,
   fontStyle: "normal" | "italic" | "oblique" = "normal",
   fontFamily: string = "Arial",
-  horizontalPadding: number = 2,
+  horizontalPadding: number = 0,
   verticalPadding: number = 5,
   lineHeightFactor: number = 1.2,
   maxCharsPerWord: number | undefined = undefined // TODO :  need support
