@@ -3,22 +3,29 @@ import { Configuration } from "../models/public/configuration";
 
 let cursor: string = "default";
 
-function appendTooltip(tooltip: HTMLDivElement) {
-  const body = document.body;
+function appendTooltip(
+  tooltip: HTMLDivElement,
+  containerId: string
+): HTMLDivElement | null {
+  if (!containerId) return console.error("Invalid containerId."), null;
 
-  if (!body) {
-    console.error("Body element not found.");
-    return;
-  }
+  const container = document.getElementById(
+    containerId
+  ) as HTMLDivElement | null;
+  if (!container) return console.error("Container not found."), null;
 
-  if (body.querySelector("#bubbleChartTooltip")) {
-    return; // Tooltip already exists, no need to append
-  }
+  const parent = container.parentElement as HTMLDivElement | null;
+  if (!parent) return console.error("Parent container not found."), null;
 
-  body.prepend(tooltip); // `prepend` automatically handles both cases (empty & non-empty body)
+  return (
+    (parent.querySelector("#bubbleChartTooltip") as HTMLDivElement) ||
+    (parent.prepend(tooltip), tooltip)
+  );
 }
 
-export function createTooltipElement(config: Configuration): HTMLDivElement {
+export function createTooltipElement(
+  config: Configuration
+): HTMLDivElement | null {
   const formattedToolTip =
     config.data[0].toolTipConfig?.tooltipFormattedData?.trim();
   if (formattedToolTip) {
@@ -27,8 +34,13 @@ export function createTooltipElement(config: Configuration): HTMLDivElement {
 
     // Append to DOM
     const tooltip = tempContainer.firstElementChild as HTMLDivElement;
-    appendTooltip(tooltip);
-    return tooltip;
+
+    // tooltip should be hidden on Initialization
+    tooltip.style.display = "none";
+    tooltip.style.visibility = "hidden";
+    tooltip.style.opacity = "0";
+
+    return appendTooltip(tooltip, config.canvasContainerId);
   }
 
   const tooltip = document.createElement("div");
@@ -72,7 +84,6 @@ export function createTooltipElement(config: Configuration): HTMLDivElement {
     letterSpacing: getCssValue(tooltipOptions.letterSpacing, "normal"),
     border: getBorderValue(),
     boxShadow: tooltipOptions.boxShadow ?? "none",
-    opacity: String(tooltipOptions.opacity ?? 1),
     maxWidth: getCssValue(tooltipOptions.maxWidth, "200px"),
     minWidth: getCssValue(tooltipOptions.minWidth, "auto"),
     maxHeight: getCssValue(tooltipOptions.maxHeight, "none"),
@@ -81,10 +92,15 @@ export function createTooltipElement(config: Configuration): HTMLDivElement {
     transition: tooltipOptions.transition ?? "opacity 0.2s",
     transform: tooltipOptions.transform ?? "none",
     backdropFilter: tooltipOptions.backdropFilter ?? "none",
+
+    // on Initialize it should be not visible
+    opacity: String(tooltipOptions.opacity ?? 1),
+    display: "none",
+    visibility: "hidden",
   });
 
   // Append to DOM
-  appendTooltip(tooltip);
+  appendTooltip(tooltip, config.canvasContainerId);
   return tooltip;
 }
 
@@ -124,6 +140,8 @@ export function handleMouseMove(
     } else {
       canvas.style.cursor = "default";
       tooltip.style.display = "none";
+      tooltip.style.visibility = "hidden";
+      tooltip.style.opacity = "0";
     }
   }
 }
@@ -166,6 +184,8 @@ function updateTooltip(
     tooltip.style.left = `${event.pageX + 15}px`;
     tooltip.style.top = `${event.pageY - 30}px`;
     tooltip.style.zIndex = "9999";
+    tooltip.style.visibility = "visible";
+    tooltip.style.opacity = "1";
   }
 }
 
