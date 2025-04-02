@@ -39,6 +39,7 @@ export function createTooltipElement(
     tooltip.style.display = "none";
     tooltip.style.visibility = "hidden";
     tooltip.style.opacity = "0";
+    tooltip.style.position = "absolute";
 
     return appendTooltip(tooltip, config.canvasContainerId);
   }
@@ -181,11 +182,17 @@ function updateTooltip(
     canvas.style.cursor = cursor;
     tooltip.style.display = "block";
     tooltip.innerHTML = getToolTipData(hovered);
-    tooltip.style.left = `${event.pageX + 15}px`;
-    tooltip.style.top = `${event.pageY - 30}px`;
-    tooltip.style.zIndex = "9999";
+
+    // Get the correct position relative to the canvas
+    const canvasRect = canvas.getBoundingClientRect();
+
+    tooltip.style.left = `${event.clientX - canvasRect.left + 15}px`;
+    tooltip.style.top = `${event.clientY - canvasRect.top + 15}px`;
+
+    tooltip.style.zIndex = "999999";
     tooltip.style.visibility = "visible";
     tooltip.style.opacity = "1";
+    tooltip.style.position = "absolute";
   }
 }
 
