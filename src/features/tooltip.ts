@@ -135,15 +135,13 @@ export function handleMouseMove(
     cursor = config?.cursorType;
   }
 
-  if (tooltip) {
-    if (hoveredItem) {
-      updateTooltip(event, hoveredItem, canvas, tooltip);
-    } else {
-      canvas.style.cursor = "default";
-      tooltip.style.display = "none";
-      tooltip.style.visibility = "hidden";
-      tooltip.style.opacity = "0";
-    }
+  if (tooltip && hoveredItem) {
+    updateTooltip(event, hoveredItem, canvas, tooltip);
+  } else {
+    canvas.style.cursor = "default";
+    tooltip.style.display = "none";
+    tooltip.style.visibility = "hidden";
+    tooltip.style.opacity = "0";
   }
 }
 
