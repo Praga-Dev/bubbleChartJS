@@ -4,42 +4,22 @@ import { Configuration } from "../models/public/configuration";
 
 export function getChartData(
   config: Configuration,
-  canvas: HTMLCanvasElement,
-  ctx: CanvasRenderingContext2D
+  width: number,
+  height: number
 ) {
   // Add padding constant at the top
   const CANVAS_PADDING = 5; // pixels of padding around all edges
 
   // Calculate available space considering padding
   const maxPossibleRadius = Math.min(
-    (canvas.width - CANVAS_PADDING * 2) / 2,
-    (canvas.height - CANVAS_PADDING * 2) / 2
+    (width - CANVAS_PADDING * 2) / 2,
+    (height - CANVAS_PADDING * 2) / 2
   );
 
-  // Calculate radii based on available space
-  // const availableWidth = canvas.width - CANVAS_PADDING * 2;
-  // const availableHeight = canvas.height - CANVAS_PADDING * 2;
-  // const canvasMinDimension = Math.min(availableWidth, availableHeight);
-
-  // Add this code for crisp rendering
-  const devicePixelRatio = window.devicePixelRatio || 1;
-  const rect = canvas.getBoundingClientRect();
-
-  // reduce width & height
-  // const rectWidth = rect.width - (rect.width / 100) * 10;
-  // const rectHeight = rect.height - (rect.height / 100) * 10;
-
-  canvas.width = rect.width * devicePixelRatio;
-  canvas.height = rect.height * devicePixelRatio;
-
-  canvas.style.width = rect.width + "px";
-  canvas.style.height = rect.height + "px";
-
-  ctx.scale(devicePixelRatio, devicePixelRatio);
 
   // Modify center calculations
-  const centerX = rect.width / 2;
-  const centerY = rect.height / 2;
+  const centerX = width / 2;
+  const centerY = height / 2;
 
   const sortedData: DataItemInfo[] = [...config.data]
     .sort((a, b) => b.value - a.value)
@@ -59,12 +39,12 @@ export function getChartData(
 
   const internalMaxRadius = Math.min(
     maxPossibleRadius * 0.5, // Keep 50% of available space
-    Math.min(canvas.width, canvas.height) * 0.2 // Ensure it scales with canvas
+    Math.min(width, height) * 0.2 // Ensure it scales with canvas
   );
 
   const internalMinRadius = Math.max(
     internalMaxRadius * 0.3, // Minimum 30% of max radius
-    Math.min(canvas.width, canvas.height) * 0.05 // Ensure a reasonable minimum size
+    Math.min(width, height) * 0.05 // Ensure a reasonable minimum size
   );
 
   // Value-based radius calculation with padding consideration
@@ -77,8 +57,8 @@ export function getChartData(
     // Ensure radius respects padding
     item.radius = Math.min(
       item.radius,
-      (canvas.width - CANVAS_PADDING * 2) / 2,
-      (canvas.height - CANVAS_PADDING * 2) / 2
+      (width - CANVAS_PADDING * 2) / 2,
+      (height - CANVAS_PADDING * 2) / 2
     );
   });
 
@@ -95,8 +75,8 @@ export function getChartData(
       const goldenAngle = Math.PI * (3 - Math.sqrt(5)); // ~137.5 degrees
 
       // Calculate position with padding constraints
-      const maxX = canvas.width - CANVAS_PADDING - item.radius;
-      const maxY = canvas.height - CANVAS_PADDING - item.radius;
+      const maxX = width - CANVAS_PADDING - item.radius;
+      const maxY = height - CANVAS_PADDING - item.radius;
 
       item.x = Math.min(
         maxX,
@@ -146,9 +126,9 @@ export function getChartData(
       const boundaryPadding = current.radius + CANVAS_PADDING;
       if (current.x < boundaryPadding) {
         dxTotal += (boundaryPadding - current.x) * PHYSICS.boundaryForce;
-      } else if (current.x > canvas.width - boundaryPadding) {
+      } else if (current.x > width - boundaryPadding) {
         dxTotal +=
-          (canvas.width - boundaryPadding - current.x) * PHYSICS.boundaryForce;
+          (width - boundaryPadding - current.x) * PHYSICS.boundaryForce;
       }
 
       // 2. Bubble repulsion with tight spacing
@@ -261,12 +241,12 @@ export function getChartData(
   sortedData.forEach((bubble) => {
     const clampedX = Math.max(
       CANVAS_PADDING + bubble.radius,
-      Math.min(canvas.width - CANVAS_PADDING - bubble.radius, bubble.x)
+      Math.min(width - CANVAS_PADDING - bubble.radius, bubble.x)
     );
 
     const clampedY = Math.max(
       CANVAS_PADDING + bubble.radius,
-      Math.min(canvas.height - CANVAS_PADDING - bubble.radius, bubble.y)
+      Math.min(height - CANVAS_PADDING - bubble.radius, bubble.y)
     );
 
     // Only update position if not fixed or moved significantly

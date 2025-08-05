@@ -25,13 +25,16 @@ export function renderChart(config: Configuration) {
     return;
   }
 
-  const sortedData = getChartData(config, canvas, ctx);
+  const { width, height } = setupHiDPICanvas(canvas, ctx);
+  const sortedData = getChartData(config, width, height);
 
   function draw() {
     if (!canvas || !ctx) {
       console.warn("canvas or ctx is not valid");
       return;
     }
+
+    setupHiDPICanvas(canvas, ctx);
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -76,6 +79,9 @@ export function renderChart(config: Configuration) {
       ctx.fillStyle = fontColor;
       ctx.font = ctxFont;
 
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
+
       ctx.textAlign = textAlign;
       ctx.textBaseline = textBaseline;
 
@@ -93,7 +99,7 @@ export function renderChart(config: Configuration) {
       if (config.textWrap) {
         const padding = 5;
         const maxWidth = radius * 1.5 - padding * 2;
-        const lineHeight = fontSize * 1.2;
+        const lineHeight = fontSize * 1.4;
 
         const lines = getWrappedLines(
           ctx,
@@ -108,13 +114,35 @@ export function renderChart(config: Configuration) {
         );
         const startY = y - ((lines.length - 1) * lineHeight) / 2;
 
-        lines.forEach((line, index) =>
-          ctx.fillText(line, x, startY + index * lineHeight)
+        lines.forEach((line, index) => {
+          const drawX = Math.round(x);
+          const drawY = Math.round(startY + index * lineHeight);
+          ctx.fillText(line, drawX, drawY);
+        }
         );
       } else {
-        ctx.fillText(item.label, x, y);
+        ctx.fillText(item.label, Math.round(x), Math.round(y));
       }
     });
+  }
+
+  function setupHiDPICanvas(
+    canvas: HTMLCanvasElement,
+    ctx: CanvasRenderingContext2D
+  ) {
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+
+    canvas.style.width = `${rect.width}px`;
+    canvas.style.height = `${rect.height}px`;
+
+    ctx.setTransform(1, 0, 0, 1, 0, 0); // Always reset transform first
+    ctx.scale(dpr, dpr);
+
+    return { width: rect.width, height: rect.height, dpr };
   }
 
   /**
@@ -137,8 +165,8 @@ export function renderChart(config: Configuration) {
       fontStyle: item.fontStyle || "normal",
       fontWeight:
         typeof item.fontWeight === "number" &&
-        item.fontWeight >= 100 &&
-        item.fontWeight <= 900
+          item.fontWeight >= 100 &&
+          item.fontWeight <= 900
           ? item.fontWeight
           : 400, // Clamp within 100-900
       textAlign: item.textAlign ?? "center",
@@ -159,8 +187,8 @@ export function renderChart(config: Configuration) {
       // Font family with robust fallback
       fontFamily:
         item.fontFamily &&
-        typeof item.fontFamily === "string" &&
-        item.fontFamily !== "Arial"
+          typeof item.fontFamily === "string" &&
+          item.fontFamily !== "Arial"
           ? `${item.fontFamily}, Arial, sans-serif`
           : `${config.defaultFontFamily ?? "Arial"}, sans-serif`,
     };
