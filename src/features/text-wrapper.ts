@@ -27,7 +27,7 @@ export function getWrappedLines(
       : Math.min(maxAllowedLines, calculatedMaxLines);
 
   // Adjust max line width by removing horizontal padding
-  maxLineWidth = Math.max(0, maxLineWidth - horizontalPadding);
+  maxLineWidth = Math.max(0, maxLineWidth - horizontalPadding * 2);
 
   // Break text into words
   const words = text.split(" ");
@@ -37,11 +37,13 @@ export function getWrappedLines(
   let isTruncated = false;
   let isWordTruncated = false;
 
+  ctx.font = `${fontWeight || ""} ${fontStyle || ""} ${fontSize}px ${fontFamily}`; // Support to optimize the textwrap incase fontweight or fontstyle are applied
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = "high";
+
   for (const word of words) {
     const testLine = currentLine ? `${currentLine} ${word}` : word;
 
-    // Apply font style and weight if provided
-    ctx.font = `${fontWeight || ""} ${fontStyle || ""} ${fontSize}px ${fontFamily}`; // Support to optimize the textwrap incase fontweight or fontstyle are applied
     const testWidth = ctx.measureText(testLine).width;
 
     if (testWidth <= maxLineWidth) {

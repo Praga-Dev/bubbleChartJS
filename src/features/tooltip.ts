@@ -131,17 +131,18 @@ export function handleMouseMove(
   const { mouseX, mouseY } = getMousePosition(event, canvas);
   const hoveredItem = findHoveredItem(mouseX, mouseY, data);
 
-  if (config?.cursorType) {
-    cursor = config?.cursorType;
-  }
 
-  if (tooltip && hoveredItem) {
+  if (hoveredItem) {
+    const hoverCursor = config?.cursorType || "pointer";
+    canvas.style.cursor = hoverCursor;
     updateTooltip(event, hoveredItem, canvas, tooltip);
   } else {
     canvas.style.cursor = "default";
-    tooltip.style.display = "none";
-    tooltip.style.visibility = "hidden";
-    tooltip.style.opacity = "0";
+    if (tooltip) {
+      tooltip.style.display = "none";
+      tooltip.style.visibility = "hidden";
+      tooltip.style.opacity = "0";
+    }
   }
 }
 
@@ -150,9 +151,11 @@ export function handleMouseMove(
  */
 function getMousePosition(event: MouseEvent, canvas: HTMLCanvasElement) {
   const rect = canvas.getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 1;
+
   return {
-    mouseX: event.clientX - rect.left,
-    mouseY: event.clientY - rect.top,
+    mouseX: (event.clientX - rect.left) * dpr,
+    mouseY: (event.clientY - rect.top) * dpr,
   };
 }
 

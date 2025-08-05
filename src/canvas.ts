@@ -22,10 +22,6 @@ export function createCanvas(config: Configuration): HTMLCanvasElement | null {
 
   const canvas = document.createElement("canvas") as HTMLCanvasElement;
 
-  // Get parent container dimensions
-  canvas.width = canvasContainer.offsetWidth;
-  canvas.height = canvasContainer.offsetHeight;
-
   Object.assign(canvas.style, {
     border: config.canvasBorderColor?.trim()
       ? `1px solid #${config.canvasBorderColor}`
@@ -46,6 +42,5 @@ export function createCanvas(config: Configuration): HTMLCanvasElement | null {
   canvas.style.setProperty("-ms-interpolation-mode", "nearest-neighbor");
 
   canvasContainer.appendChild(canvas);
-
   return canvas;
 }
