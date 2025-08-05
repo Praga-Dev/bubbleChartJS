@@ -15,3 +15,7 @@ All notable changes to this project will be documented in this file.
 ---
 
 **📝 Note:** This is the first commit to the repository. Future updates will include feature enhancements, bug fixes, and optimizations. Stay tuned! 🚀
+
+### Fixed
+
+- Fixed incorrect mouse coordinate detection on high-DPI displays by scaling with `devicePixelRatio`.
