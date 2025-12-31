@@ -1,6 +1,40 @@
-# bubbleChartJs
+# bubble-chart-js
 
 bubbleChartJs is a lightweight and customizable JavaScript library for creating stacked bubble charts, arranging bubbles by size with the largest at the top.
+
+![npm](https://img.shields.io/npm/v/bubble-chart-js)
+![npm downloads](https://img.shields.io/npm/dm/bubble-chart-js)
+![license](https://img.shields.io/npm/l/bubble-chart-js)
+
+> Built for dashboards with multiple widgets and real-world data visualization needs.
+
+## Preview
+
+![Stacked Bubble Chart](./assets/bubble-chart.png)
+
+## Why bubble-chart-js?
+
+✔ Automatically arranges bubbles by value (largest on top)
+✔ Clean stacked layout – no overlaps
+✔ Interactive tooltips & click events
+✔ Works with plain JS & TypeScript
+✔ Zero dependencies
+
+## Quick Start
+
+```js
+import { initializeChart } from "bubble-chart-js";
+
+initializeChart({
+  canvasContainerId: "bubbleChart",
+  data: [
+    { label: "Orders", value: 207, bubbleColor: "#ff5733" },
+    { label: "Returns", value: 96, bubbleColor: "#4caf50" },
+  ],
+});
+```
+
+That’s it. Chart rendered.
 
 ### ✨ Why Use a Stacked Bubble Chart?
 
@@ -22,21 +56,7 @@ Customizable & Interactive – Allows tooltips.
 
 ✔️ Interactive tooltips and hover effects
 
-### 📌 Use Cases
-
-Financial Analysis – Display investment risks vs. returns for multiple assets.
-
-Social Media Metrics – Visualize engagement levels across platforms.
-
-Scientific Research – Show relationships in grouped experimental data.
-
-### 🎨 Example Output
-
-Here’s an example of the bubble chart generated using this package:
-
-![Stacked Bubble Chart Example](https://github.com/Praga-Dev/bubbleChartJS/blob/HEAD/assets/bubble-chart.png)
-
-## Installation
+### Installation
 
 You can install `bubbleChartJs` via npm:
 
@@ -44,9 +64,7 @@ You can install `bubbleChartJs` via npm:
 npm install bubble-chart-js
 ```
 
-## Usage
-
-### Basic Example
+## Advanced Usage
 
 ```js
 import BubbleChart from "bubblechartjs";
@@ -134,12 +152,6 @@ initializeChart(chartoptions);
 
 ## Configuration Options
 
-The `BubbleChart` class accepts a configuration object with the following properties:
-
-## Configuration Options
-
-The `BubbleChart` class accepts a configuration object with the following properties:
-
 | Property                           | Type         | Required | Optional | Description                                                                                       | Default     |
 | ---------------------------------- | ------------ | -------- | -------- | ------------------------------------------------------------------------------------------------- | ----------- |
 | `canvasContainerId`                | `string`     | ✔️ Yes   | ❌ No    | The ID of the container where the chart will be rendered.                                         | `-`         |
@@ -157,6 +169,30 @@ The `BubbleChart` class accepts a configuration object with the following proper
 
 ✔️ **Required**: These properties must be provided.
 ✔️ **Optional**: If not provided, the default value will be used.
+
+### 📌 Use Cases
+
+Financial Analysis – Display investment risks vs. returns for multiple assets.
+
+Social Media Metrics – Visualize engagement levels across platforms.
+
+Scientific Research – Show relationships in grouped experimental data.
+
+## Live Demo
+
+🚀 **Try it live on Stackblitz**
+https://stackblitz.com/edit/bubble-chart-js?file=main.js
+
+🚀 **Try it live on CodeSandbox**
+https://codesandbox.io/p/sandbox/xenodochial-cherry-4yrcnk
+
+## 📦 Package
+
+- **npm (public)**
+  https://www.npmjs.com/package/bubble-chart-js
+
+- **GitHub Packages (npm)**
+  https://github.com/Praga-Dev?tab=packages
 
 ## License
 
